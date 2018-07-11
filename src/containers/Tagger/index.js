@@ -7,23 +7,12 @@ import Tag from "../../components/Tag";
 import { addTag, updateRelationships } from "../../redux/Tags/actions";
 import { noSelect } from "../../utils/Css";
 import { noop } from "../../utils";
+import TagSearch from "../TagSearch";
 
-const TagContainer = styled.div`
-  ${noSelect} background: #EEE;
-  padding: 10px;
-
-  & > * {
-    vertical-align: middle;
-  }
-`;
-
-class Viewer extends React.Component {
+class Tagger extends React.Component {
   state = {
-    filter: "",
-    filteredTags: [],
-    selectedTags: [],
-    error: null,
-    currentIndex: -1
+    rankedTags: [],
+    selectedTags: []
   };
 
   static getDerivedStateFromProps(nextProps, lastState) {
@@ -36,67 +25,8 @@ class Viewer extends React.Component {
 
     return {
       // Pre-rank tags
-      filteredTags: Viewer.rank(remainingTags),
-      // Remaning tags to filter over
-      tags: remainingTags
+      rankedTags: Tagger.rank(remainingTags)
     };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { props, state } = this;
-
-    // If tags suffered some kind of mutation
-    if (prevProps.tags.modifiedTime !== props.tags.modifiedTime) {
-      // Refilter tags
-      this.filter();
-    }
-
-    // If filter string has changed
-    if (prevState.filter !== state.filter) {
-      // Apply filter
-      this.filter();
-    }
-  }
-
-  onChange = evt => {
-    this.setState({ filter: evt.target.value });
-  };
-
-  onKeyDown = evt => {
-    const { state } = this;
-    const { key } = evt;
-
-    switch (key) {
-      case "ArrowDown":
-        this.setState({
-          currentIndex:
-            (state.currentIndex + 2) % (state.filteredTags.length + 1) - 1
-        });
-        return evt.preventDefault();
-      case "ArrowUp":
-        this.setState({
-          currentIndex:
-            state.currentIndex === -1
-              ? state.filteredTags.length - 1
-              : state.currentIndex - 1
-        });
-        return evt.preventDefault();
-      case "Enter":
-        if (state.currentIndex !== -1 && state.filteredTags.length) {
-          this.selectCurrent();
-        } else if (state.filter) {
-          this.addTag();
-        }
-        return evt.preventDefault();
-      default:
-        break;
-    }
-  };
-
-  addTag() {
-    const { props, state } = this;
-
-    props.addTag(state.filter);
   }
 
   static calculatePrefix(tag, referenceTags) {
@@ -118,34 +48,11 @@ class Viewer extends React.Component {
     );
   }
 
-  filter() {
-    const { state } = this;
-    const { filter } = state;
-
-    try {
-      const regex = new RegExp(filter, "gi");
-
-      const filteredTags = state.tags.filter(t => {
-        regex.lastIndex = 0;
-        return regex.test(t.name);
-      });
-
-      this.setState({
-        filter,
-        filteredTags: Viewer.rank(filteredTags, state.selectedTags),
-        error: null,
-        currentIndex: filter ? 0 : -1
-      });
-    } catch (e) {
-      this.setState({ error: e.message });
-    }
-  }
-
   static rank(tags, nids) {
     return tags
       .map(t => ({
         ...t,
-        rank: Viewer.calculatePrefix(t, nids)
+        rank: Tagger.calculatePrefix(t, nids)
       }))
       .sort((a, b) => b.rank - a.rank);
   }
@@ -174,25 +81,20 @@ class Viewer extends React.Component {
     props.updateRelationships(mapped);
   };
 
-  select(index) {
+  select(nid) {
+    console.log("nid", nid);
     const { state } = this;
 
-    const currentTag = state.filteredTags[index];
+    const currentTag = state.rankedTags.find(t => t.nid === nid);
     const selectedTags = [...state.selectedTags, currentTag];
 
     this.setState({
       selectedTags,
-      filteredTags: Viewer.rank(
-        state.filteredTags.filter(tag => tag.nid !== currentTag.nid),
+      rankedTags: Tagger.rank(
+        state.rankedTags.filter(tag => tag.nid !== currentTag.nid),
         selectedTags
-      ),
-      tags: state.tags.filter(tag => tag.nid !== currentTag.nid),
-      currentIndex: Math.min(state.currentIndex, state.filteredTags.length - 2)
+      )
     });
-  }
-
-  selectCurrent() {
-    this.select(this.state.currentIndex);
   }
 
   unselect(index) {
@@ -200,16 +102,12 @@ class Viewer extends React.Component {
 
     const currentTag = state.selectedTags[index];
 
-    this.setState(
-      {
-        selectedTags: state.selectedTags.filter(
-          tag => tag.nid !== currentTag.nid
-        ),
-        filteredTags: Viewer.rank([...state.filteredTags, currentTag]),
-        tags: [...state.tags, currentTag]
-      },
-      () => this.filter()
-    );
+    this.setState({
+      selectedTags: state.selectedTags.filter(
+        tag => tag.nid !== currentTag.nid
+      ),
+      rankedTags: Tagger.rank([...state.rankedTags, currentTag])
+    });
   }
 
   render() {
@@ -218,7 +116,7 @@ class Viewer extends React.Component {
     return (
       <div>
         <h1>- Tagger -</h1>
-        <TagContainer>
+        <TagSearch tags={state.rankedTags} onSelect={nid => this.select(nid)}>
           {state.selectedTags.map((tag, i) => (
             <Tag
               {...tag}
@@ -227,24 +125,7 @@ class Viewer extends React.Component {
               onClick={() => this.unselect(i)}
             />
           ))}
-          <Input
-            onKeyDown={this.onKeyDown}
-            onChange={this.onChange}
-            value={state.filter}
-            size="1.25em"
-          />
-        </TagContainer>
-        <TagContainer>
-          {state.filteredTags.map((tag, i) => (
-            <Tag
-              {...tag}
-              hover={i === state.currentIndex}
-              key={tag.nid}
-              onClick={() => this.select(i)}
-              prefix={tag.rank}
-            />
-          ))}
-        </TagContainer>
+        </TagSearch>
         <button onClick={this.saveRelationships}>Save Relationships</button>
         {state.error}
       </div>
@@ -261,4 +142,4 @@ const mapDisptachToProps = dispatch => ({
   updateRelationships: tags => dispatch(updateRelationships(tags))
 });
 
-export default connect(mapStateToProps, mapDisptachToProps)(Viewer);
+export default connect(mapStateToProps, mapDisptachToProps)(Tagger);

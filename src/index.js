@@ -37,8 +37,6 @@ function App() {
           <Loader />
           <Viewer />
           <Tagger />
-          <TagEditor />
-          
         </React.Fragment>
       </Provider>
     </div>
