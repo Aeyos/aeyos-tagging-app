@@ -29,27 +29,20 @@ class TagSearch extends React.Component {
   };
 
   componentDidMount() {
-    console.log("mounted");
     this.filter("");
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
 
-    console.log("componentDidUpdate");
-
     // If tags suffered some kind of mutation
     if (!isEqual(prevProps.tags, props.tags)) {
-      console.log("1");
       // Refilter tags
       this.filter(state.filter);
     }
 
     if (!isEqual(prevState.filteredTags, state.filteredTags)) {
-      console.log("3");
-
       if (prevState.filter === state.filter) {
-        console.log("filter === filter");
         this.setState({
           currentIndex: range(
             state.currentIndex,
@@ -73,7 +66,6 @@ class TagSearch extends React.Component {
     const { state } = this;
 
     if (evt.target.value !== state.filter) {
-      console.log("filter on change", evt.target.value);
       this.filter(evt.target.value);
     }
   };
@@ -120,7 +112,7 @@ class TagSearch extends React.Component {
   }
 
   filter(newVal) {
-    const { props, state } = this;
+    const { props } = this;
 
     try {
       const regex = new RegExp(newVal, "gi");
@@ -180,7 +172,6 @@ class TagSearch extends React.Component {
             onKeyDown={this.onKeyDown}
             onChange={this.onChange}
             value={state.filter}
-            size="1.25em"
           />
         </TagContainer>
         <TagContainer>
@@ -202,7 +193,6 @@ class TagSearch extends React.Component {
             />
           )}
         </TagContainer>
-        --CURRETNINDEX {state.currentIndex}--
         <Error>{state.error}</Error>
       </div>
     );

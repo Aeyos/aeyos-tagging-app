@@ -8,6 +8,8 @@ import ColorBox from "../../components/ColorBox";
 import TagSearch from "../TagSearch";
 import { addTag, updateTags } from "../../redux/Tags/actions";
 import { MaterialColorsArr } from "../../utils/Colors";
+import { MdColorLens } from 'react-icons/lib/md';
+import { FaTag } from 'react-icons/lib/fa';
 
 class Tagger extends React.Component {
   state = {
@@ -67,10 +69,12 @@ class Tagger extends React.Component {
             <Input
               value={state.name}
               onChange={evt => this.setState({ name: evt.target.value })}
+              icon={<FaTag />}
             />
             <Input
               value={state.color}
               onChange={evt => this.setState({ color: evt.target.value })}
+              icon={<MdColorLens />}
               style={{ color: state.color }}
             />
             {MaterialColorsArr.map(c => (

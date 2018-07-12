@@ -5,15 +5,15 @@ const Box = styled.div`
   cursor: pointer;
   width: 20px;
   height: 20px;
-  border-radius: 5px;
+  border-radius: ${props => props.theme.borderRadius};
   display: inline-block;
   background-color: ${props => props.color};
   overflow: hidden;
   margin: 5px 2.5px;
 
   &:before {
-    transition: border-color 0.2s ease;
-    border-radius: 5px;
+    transition: border-color ${props => props.theme.transition};
+    border-radius: ${props => props.theme.borderRadius};
     box-sizing: border-box;
     content: " ";
     display: inline-block;

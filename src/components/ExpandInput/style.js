@@ -11,16 +11,21 @@ const calcColor = props => {
 
 export const Container = styled.div`
   position: relative;
-  font-size: ${props => props.size};
+  font-size: ${props => props.size || props.theme.inputFontSize};
+
+  & > * {
+    display: inline-block;
+  }
 `;
 
 export const Input = styled.input`
   background: transparent;
   border: none;
   box-sizing: border-box;
+  color: ${props => props.theme.mainColor}
   font-size: inherit;
-  min-width: 1.6em;
   max-width: 100%;
+  min-width: 10em;
   outline: none
   padding-left: 0.8em;
   width: ${props => props.width}px;
@@ -28,8 +33,9 @@ export const Input = styled.input`
 
 export const Border = styled.div`
   border-bottom: 2px solid ${calcColor};
+  min-width: 10em;
   padding-left: 0.8em;
-  transition: width 0.2s ease;
+  transition: width ${props => props.theme.transition};
   width: ${props => props.width}px;
 `
 
@@ -41,4 +47,7 @@ export const Measure = styled.div`
   position: absolute;
   whiteSpace: pre;
   z-index: -1;
+`;
+
+export const Prefix = styled.div`
 `;

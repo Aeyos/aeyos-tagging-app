@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Tag = styled.div`
   background: transparent;
-  border-radius: 5px;
+  border-radius: ${props => props.theme.borderRadius};
   border: 2px solid ${props => props.color};
   color: ${props => props.color};
   display: inline-block;
@@ -14,7 +14,7 @@ const Tag = styled.div`
   margin: 0.25em;
   overflow: hidden;
   padding: 0 0.5em;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background ${props => props.transition}, color ${props => props.transition};
 
   ${props => (props.hover ? "&" : "&:hover")} {
     background-color: ${props => props.color};

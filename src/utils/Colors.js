@@ -1,4 +1,3 @@
-export const ErrorRed = "hsl(0, 85%, 60%)";
 export const MaterialColorsArr = [
   "rgb(244, 67, 54)",
   "rgb(233, 30, 99)",

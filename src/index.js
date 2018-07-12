@@ -6,12 +6,16 @@ import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import createSagaMiddleware from "redux-saga";
 import { composeWithDevTools } from "redux-devtools-extension";
+import { ThemeProvider } from "styled-components";
+import { BrowserRouter, Route } from "react-router-dom";
 
 // COMPONENTS
-import Loader from "./containers/Loader";
-import Viewer from "./containers/Viewer";
-import Tagger from "./containers/Tagger";
-import TagEditor from "./containers/TagEditor";
+import Content from "./components/Content";
+import SideMenu from "./containers/SideMenu";
+import routes from "./routes";
+
+// CONSTANTS
+import defaultTheme from "./themes/default";
 
 // STYLES
 import "./styles.css";
@@ -33,12 +37,14 @@ function App() {
   return (
     <div className="App">
       <Provider store={store}>
-        <React.Fragment>
-          <Loader />
-          <Viewer />
-          <Tagger />
-          <TagEditor />
-        </React.Fragment>
+        <BrowserRouter>
+          <ThemeProvider theme={defaultTheme}>
+            <div>
+              <SideMenu />
+              <Content>{routes.map(route => <Route {...route} />)}</Content>
+            </div>
+          </ThemeProvider>
+        </BrowserRouter>
       </Provider>
     </div>
   );

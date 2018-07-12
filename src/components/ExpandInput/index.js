@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Border, Container, Input, Measure } from "./style";
+import { Border, Container, Input, Measure, Prefix } from "./style";
 
 export default class ExpandInput extends React.Component {
   state = { width: 0 };
@@ -22,6 +22,9 @@ export default class ExpandInput extends React.Component {
 
     return (
       <Container size={props.size}>
+        <Prefix>
+          {props.icon}
+        </Prefix>
         <div>
           <Input value={props.value} width={state.width} {...props} />
           <Border width={state.width} />
@@ -39,6 +42,5 @@ export default class ExpandInput extends React.Component {
 }
 
 ExpandInput.defaultProps = {
-  size: "1em",
   value: ""
 };

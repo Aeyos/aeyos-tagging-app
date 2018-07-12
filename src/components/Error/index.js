@@ -2,17 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import { IoClose } from "react-icons/lib/io";
 
-import { ErrorRed } from "../../utils/Colors";
-console.log('ERROR RED', ErrorRed);
-
 const Message = styled.div`
-  border: 2px solid ${ErrorRed};
-  border-radius: 5px;
+  border: 2px solid ${props => props.theme.errorColor};
+  border-radius: ${props => props.theme.borderRadius};
   position: relative;
 `;
 
 const Icon = styled.div`
-  background-color: ${ErrorRed};
+  background-color: ${props => props.theme.errorColor};
   color: white;
   height: 100%;
   left: -2px;
@@ -33,7 +30,7 @@ const Icon = styled.div`
 `;
 
 const Text = styled.div`
-  color: ${ErrorRed};
+  color: ${props => props.theme.errorColor};
   font-weight: 600;
   margin-left: 40px;
   padding: 0.5em;
