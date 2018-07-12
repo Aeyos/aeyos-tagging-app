@@ -60,8 +60,10 @@ class TagSearch extends React.Component {
       } else {
         if (!state.filter) {
           this.setState({ currentIndex: -1 });
-        } else {
+        } else if (state.filteredTags.length) {
           this.setState({ currentIndex: 0 });
+        } else {
+          this.setState({ currentIndex: -1 });
         }
       }
     }
@@ -101,7 +103,8 @@ class TagSearch extends React.Component {
           if (state.filteredTags.length === 1) {
             this.setState({ filter: "", currentIndex: -1 });
           }
-        } else if (state.filter) {
+        } else if (state.currentIndex === -1 && state.filter) {
+          this.setState({ currentIndex: 0 });
           this.addTag();
         }
         return evt.preventDefault();
@@ -190,7 +193,16 @@ class TagSearch extends React.Component {
               prefix={tag.rank}
             />
           ))}
+          {state.filter && (
+            <Tag
+              hover={state.currentIndex === -1}
+              name="New Tag"
+              color="#2878b1"
+              prefix="+"
+            />
+          )}
         </TagContainer>
+        --CURRETNINDEX {state.currentIndex}--
         <Error>{state.error}</Error>
       </div>
     );
