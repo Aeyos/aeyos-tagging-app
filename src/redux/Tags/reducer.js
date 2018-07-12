@@ -18,7 +18,7 @@ export default (state = initialState, action) => {
         return newState;
       }
       return state;
-    case "UPDATE_RELATIONSHIPS":
+    case "UPDATE_TAGS":
       const newList = tagList.map(tag => {
         const newTag = action.payload.tags.find(t => t.nid === tag.nid);
         if (newTag) {

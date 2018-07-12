@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import Input from "../../components/ExpandInput";
 import Tag from "../../components/Tag";
-import { addTag, updateRelationships } from "../../redux/Tags/actions";
+import { addTag, updateTags } from "../../redux/Tags/actions";
 import { noSelect } from "../../utils/Css";
 import { noop } from "../../utils";
 import TagSearch from "../TagSearch";
@@ -78,7 +78,7 @@ class Tagger extends React.Component {
     });
 
     this.setState({ selectedTags: mapped });
-    props.updateRelationships(mapped);
+    props.updateTags(mapped);
   };
 
   select(nid) {
@@ -139,7 +139,7 @@ const mapStateToProps = state => ({
 
 const mapDisptachToProps = dispatch => ({
   addTag: name => dispatch(addTag(name)),
-  updateRelationships: tags => dispatch(updateRelationships(tags))
+  updateTags: tags => dispatch(updateTags(tags))
 });
 
 export default connect(mapStateToProps, mapDisptachToProps)(Tagger);
